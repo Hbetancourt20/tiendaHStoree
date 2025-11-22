@@ -1,13 +1,16 @@
-package com.example.tiendaonlinehstore.ui
+package com.example.tiendaonlinehstore.ui.fragments
 
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -18,7 +21,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.tiendaonlinehstore.R
 
-class MapActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapFragment : Fragment(), OnMapReadyCallback {
 
     private var gMap: GoogleMap? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -34,30 +37,37 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 getCurrentLocation()
             }
             else -> {
-                Toast.makeText(this, R.string.location_permission_denied, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.location_permission_denied, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_map, container, false)
+    }
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         gMap = googleMap
         checkLocationPermissionAndGetLocation()
+        addStoreMarkers()
     }
 
     private fun checkLocationPermissionAndGetLocation() {
         when {
             ContextCompat.checkSelfPermission(
-                this,
+                requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> {
                 getCurrentLocation()
@@ -71,7 +81,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun getCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return
         }
         gMap?.isMyLocationEnabled = true
@@ -79,8 +89,22 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             location?.let {
                 val userLocation = LatLng(it.latitude, it.longitude)
                 gMap?.addMarker(MarkerOptions().position(userLocation).title(getString(R.string.your_location)))
-                gMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15f)) // Zoom level 15
+                gMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12f))
             }
         }
     }
+
+    private fun addStoreMarkers() {
+        val stores = listOf(
+            Store("Tienda Principal", LatLng(4.656061, -74.059536)),
+            Store("Sucursal Norte", LatLng(4.704386, -74.043503)),
+            Store("Sucursal Occidente", LatLng(4.664459, -74.113063))
+        )
+
+        stores.forEach { store ->
+            gMap?.addMarker(MarkerOptions().position(store.location).title(store.name))
+        }
+    }
+
+    data class Store(val name: String, val location: LatLng)
 }

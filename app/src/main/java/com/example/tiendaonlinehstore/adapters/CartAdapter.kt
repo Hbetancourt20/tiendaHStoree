@@ -6,14 +6,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tiendaonlinehstore.R
 import com.example.tiendaonlinehstore.models.CartItemDetails
 
 class CartAdapter(
-    private var cartItems: List<CartItemDetails>,
     private val listener: OnCartItemInteractionListener
-) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
+) : ListAdapter<CartItemDetails, CartAdapter.CartViewHolder>(CartItemDiffCallback()) {
 
     interface OnCartItemInteractionListener {
         fun onIncreaseQuantity(item: CartItemDetails)
@@ -27,14 +28,7 @@ class CartAdapter(
     }
 
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
-        holder.bind(cartItems[position])
-    }
-
-    override fun getItemCount() = cartItems.size
-
-    fun updateData(newCartItems: List<CartItemDetails>) {
-        cartItems = newCartItems
-        notifyDataSetChanged()
+        holder.bind(getItem(position))
     }
 
     inner class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -45,14 +39,38 @@ class CartAdapter(
         private val decreaseButton: Button = itemView.findViewById(R.id.btnDecreaseQuantity)
         private val removeButton: ImageButton = itemView.findViewById(R.id.btnRemoveFromCart)
 
+        init {
+            increaseButton.setOnClickListener {
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    listener.onIncreaseQuantity(getItem(adapterPosition))
+                }
+            }
+            decreaseButton.setOnClickListener {
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    listener.onDecreaseQuantity(getItem(adapterPosition))
+                }
+            }
+            removeButton.setOnClickListener {
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    listener.onRemoveItem(getItem(adapterPosition))
+                }
+            }
+        }
+
         fun bind(item: CartItemDetails) {
             nameTextView.text = item.product.name
             priceTextView.text = String.format("$%.2f", item.product.price)
             quantityTextView.text = item.quantity.toString()
-
-            increaseButton.setOnClickListener { listener.onIncreaseQuantity(item) }
-            decreaseButton.setOnClickListener { listener.onDecreaseQuantity(item) }
-            removeButton.setOnClickListener { listener.onRemoveItem(item) }
         }
+    }
+}
+
+class CartItemDiffCallback : DiffUtil.ItemCallback<CartItemDetails>() {
+    override fun areItemsTheSame(oldItem: CartItemDetails, newItem: CartItemDetails): Boolean {
+        return oldItem.cartItemId == newItem.cartItemId
+    }
+
+    override fun areContentsTheSame(oldItem: CartItemDetails, newItem: CartItemDetails): Boolean {
+        return oldItem == newItem
     }
 }

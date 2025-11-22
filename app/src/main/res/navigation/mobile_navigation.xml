@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/navigation_profile">
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.tiendaonlinehstore.ui.fragments.ProfileFragment"
+        android:label="Mi Perfil"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_products"
+        android:name="com.example.tiendaonlinehstore.ui.fragments.ProductListFragment"
+        android:label="@string/title_products"
+        tools:layout="@layout/fragment_product_list" />
+
+    <fragment
+        android:id="@+id/navigation_map"
+        android:name="com.example.tiendaonlinehstore.ui.fragments.MapFragment"
+        android:label="@string/your_location"
+        tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.tiendaonlinehstore.ui.fragments.SettingsFragment"
+        android:label="Configuración"
+        tools:layout="@layout/fragment_settings" />
+
+</navigation>

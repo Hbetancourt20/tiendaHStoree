@@ -65,7 +65,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        // This drops all tables and recreates them. For a real app, you'd use a migration strategy.
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_CART_ITEMS")
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_PRODUCTS")
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")

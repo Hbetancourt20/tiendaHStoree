@@ -2,25 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permisos para geolocalización -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="Hstore"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TiendaOnlineHStore">
 
-        <!-- 
-        ¡IMPORTANTE! Debes pegar tu clave de API de Google Maps aquí.
-        Obtenla desde la Google Cloud Console y reemplaza "YOUR_API_KEY_HERE".
-        -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDKxKho385FfnA4bILks4YAMs9qzaI6UfE" />
+            android:value="YOUR_API_KEY_HERE" />
 
         <activity
             android:name=".ui.SplashActivity"
@@ -33,14 +28,9 @@
 
         <activity android:name=".ui.LoginActivity" />
         <activity android:name=".ui.RegisterActivity" />
-        <activity android:name=".ui.ProfileActivity" />
-        <activity android:name=".ui.ProductListActivity" 
-            android:label="Productos"/>
+        <activity android:name=".MainActivity" />
         <activity android:name=".ui.CartActivity"
-            android:label="Carrito de Compras" />
-        <activity
-            android:name=".ui.MapActivity"
-            android:label="Tu Ubicación" />
+            android:label="@string/title_cart" />
 
     </application>
 

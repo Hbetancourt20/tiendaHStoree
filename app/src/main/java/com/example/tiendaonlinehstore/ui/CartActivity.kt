@@ -6,7 +6,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar // Import Toolbar
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tiendaonlinehstore.R
@@ -26,8 +26,8 @@ class CartActivity : AppCompatActivity(), CartAdapter.OnCartItemInteractionListe
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Carrito de Compras"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true) // Add back button
+        supportActionBar?.title = getString(R.string.title_cart)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         cartDao = CartDao(this)
         textViewTotal = findViewById(R.id.textViewTotal)
@@ -53,19 +53,19 @@ class CartActivity : AppCompatActivity(), CartAdapter.OnCartItemInteractionListe
     private fun setupRecyclerView() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewCart)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        cartAdapter = CartAdapter(emptyList(), this)
+        cartAdapter = CartAdapter(this)
         recyclerView.adapter = cartAdapter
     }
 
     private fun refreshCart() {
         val cartItems = cartDao.getAllCartItems()
-        cartAdapter.updateData(cartItems)
+        cartAdapter.submitList(cartItems)
         updateTotal(cartItems)
     }
 
     private fun updateTotal(cartItems: List<CartItemDetails>) {
         val total = cartItems.sumOf { it.product.price * it.quantity }
-        textViewTotal.text = String.format("Total: $%.2f", total)
+        textViewTotal.text = getString(R.string.total_price, total)
     }
 
     override fun onIncreaseQuantity(item: CartItemDetails) {
@@ -92,20 +92,20 @@ class CartActivity : AppCompatActivity(), CartAdapter.OnCartItemInteractionListe
     private fun handleCheckout() {
         val cartItems = cartDao.getAllCartItems()
         if (cartItems.isEmpty()) {
-            Toast.makeText(this, "Tu carrito está vacío", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.cart_empty, Toast.LENGTH_SHORT).show()
             return
         }
 
         AlertDialog.Builder(this)
-            .setTitle("Confirmar Compra")
-            .setMessage("¿Estás seguro de que quieres finalizar tu compra?")
-            .setPositiveButton("Sí, pagar") { _, _ ->
+            .setTitle(R.string.dialog_title_checkout_confirmation)
+            .setMessage(R.string.dialog_message_checkout_confirmation)
+            .setPositiveButton(R.string.yes_checkout) { _, _ ->
                 cartDao.clearCart()
-                Toast.makeText(this, "¡Gracias por tu compra!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, R.string.checkout_successful, Toast.LENGTH_LONG).show()
                 refreshCart()
                 finish()
             }
-            .setNegativeButton("No, seguir comprando", null)
+            .setNegativeButton(R.string.no_continue_shopping, null)
             .show()
     }
 }

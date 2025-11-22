@@ -1,17 +1,18 @@
-package com.example.tiendaonlinehstore.ui
+package com.example.tiendaonlinehstore.ui.fragments
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tiendaonlinehstore.R
@@ -19,9 +20,10 @@ import com.example.tiendaonlinehstore.adapters.ProductAdapter
 import com.example.tiendaonlinehstore.database.CartDao
 import com.example.tiendaonlinehstore.database.ProductDao
 import com.example.tiendaonlinehstore.models.Product
+import com.example.tiendaonlinehstore.ui.CartActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class ProductListActivity : AppCompatActivity(), ProductAdapter.OnItemClickListener {
+class ProductListFragment : Fragment(), ProductAdapter.OnItemClickListener {
 
     private lateinit var productDao: ProductDao
     private lateinit var cartDao: CartDao
@@ -33,32 +35,35 @@ class ProductListActivity : AppCompatActivity(), ProductAdapter.OnItemClickListe
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             selectedImageUri = it
-            contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            requireContext().contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             productImageView?.setImageURI(it)
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_product_list)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_product_list, container, false)
+    }
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.title = getString(R.string.title_products)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        productDao = ProductDao(this)
-        cartDao = CartDao(this)
+        productDao = ProductDao(requireContext())
+        cartDao = CartDao(requireContext())
 
-        setupRecyclerView()
+        setupRecyclerView(view)
 
-        val fabAddProduct: FloatingActionButton = findViewById(R.id.fabAddProduct)
+        val fabAddProduct: FloatingActionButton = view.findViewById(R.id.fabAddProduct)
         fabAddProduct.setOnClickListener {
             showAddEditProductDialog(null)
         }
 
-        val fabGoToCart: FloatingActionButton = findViewById(R.id.fabGoToCart)
+        val fabGoToCart: FloatingActionButton = view.findViewById(R.id.fabGoToCart)
         fabGoToCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
+            startActivity(Intent(requireContext(), CartActivity::class.java))
         }
     }
 
@@ -67,9 +72,9 @@ class ProductListActivity : AppCompatActivity(), ProductAdapter.OnItemClickListe
         refreshProductList()
     }
 
-    private fun setupRecyclerView() {
-        val recyclerView: RecyclerView = findViewById(R.id.recyclerViewProducts)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+    private fun setupRecyclerView(view: View) {
+        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewProducts)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         productAdapter = ProductAdapter(emptyList(), this)
         recyclerView.adapter = productAdapter
     }
@@ -81,13 +86,13 @@ class ProductListActivity : AppCompatActivity(), ProductAdapter.OnItemClickListe
     override fun onItemClick(product: Product) {
         product.id?.let {
             cartDao.addItemToCart(it, 1)
-            Toast.makeText(this, getString(R.string.product_added_to_cart, product.name), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.product_added_to_cart, product.name), Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onItemLongClick(product: Product) {
         val options = arrayOf(getString(R.string.edit), getString(R.string.delete))
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.dialog_title_options)
             .setItems(options) { _, which ->
                 when (which) {
@@ -99,13 +104,13 @@ class ProductListActivity : AppCompatActivity(), ProductAdapter.OnItemClickListe
     }
 
     private fun showDeleteConfirmationDialog(product: Product) {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.dialog_title_delete_confirmation)
             .setMessage(getString(R.string.dialog_message_delete_confirmation, product.name))
             .setPositiveButton(R.string.yes_delete) { _, _ ->
                 product.id?.let {
                     productDao.deleteProduct(it)
-                    Toast.makeText(this, R.string.product_deleted, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), R.string.product_deleted, Toast.LENGTH_SHORT).show()
                     refreshProductList()
                 }
             }
@@ -114,13 +119,13 @@ class ProductListActivity : AppCompatActivity(), ProductAdapter.OnItemClickListe
     }
 
     private fun showAddEditProductDialog(product: Product?) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_product, null)
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_product, null)
         val editTextName = dialogView.findViewById<EditText>(R.id.editTextProductName)
         val editTextDescription = dialogView.findViewById<EditText>(R.id.editTextProductDescription)
         val editTextPrice = dialogView.findViewById<EditText>(R.id.editTextProductPrice)
         val btnSelectImage = dialogView.findViewById<Button>(R.id.btnSelectImage)
         productImageView = dialogView.findViewById(R.id.imageViewProductPreview)
-        
+
         selectedImageUri = null
 
         btnSelectImage.setOnClickListener {
@@ -139,7 +144,7 @@ class ProductListActivity : AppCompatActivity(), ProductAdapter.OnItemClickListe
             }
         }
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(requireContext())
             .setTitle(dialogTitle)
             .setView(dialogView)
             .setPositiveButton(if (product == null) R.string.add else R.string.save) { _, _ ->

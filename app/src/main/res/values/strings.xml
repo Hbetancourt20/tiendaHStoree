@@ -1,3 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">tiendaOnlineHStore</string>
+    <string name="app_name">H-Store</string>
+
+    <!-- General -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+    <string name="add">Agregar</string>
+    <string name="edit">Editar</string>
+    <string name="delete">Eliminar</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="error_empty_fields">Por favor, completa todos los campos</string>
+
+    <!-- Login & Register -->
+    <string name="login_successful">Inicio de sesión exitoso</string>
+    <string name="login_error_credentials">Correo o contraseña incorrectos</string>
+    <string name="registration_successful">Registro exitoso</string>
+    <string name="registration_error_email_exists">El correo ya está registrado</string>
+    <string name="registration_error_password_mismatch">Las contraseñas no coinciden</string>
+
+    <!-- Products -->
+    <string name="title_products">Productos</string>
+    <string name="product_added_to_cart">%1$s añadido al carrito</string>
+    <string name="dialog_title_options">Elige una opción</string>
+    <string name="dialog_title_delete_confirmation">Confirmar Eliminación</string>
+    <string name="dialog_message_delete_confirmation">¿Estás seguro de que quieres eliminar \'%1$s\'?</string>
+    <string name="yes_delete">Sí, eliminar</string>
+    <string name="product_deleted">Producto eliminado</string>
+    <string name="dialog_title_add_product">Agregar Producto</string>
+    <string name="dialog_title_edit_product">Editar Producto</string>
+
+    <!-- Cart -->
+    <string name="title_cart">Carrito de Compras</string>
+    <string name="total_price">Total: $%.2f</string>
+    <string name="cart_empty">Tu carrito está vacío</string>
+    <string name="dialog_title_checkout_confirmation">Confirmar Compra</string>
+    <string name="dialog_message_checkout_confirmation">¿Estás seguro de que quieres finalizar tu compra?</string>
+    <string name="yes_checkout">Sí, pagar</string>
+    <string name="checkout_successful">¡Gracias por tu compra!</string>
+    <string name="no_continue_shopping">No, seguir comprando</string>
+
+    <!-- Map -->
+    <string name="location_permission_denied">Permiso de ubicación denegado</string>
+    <string name="your_location">Tu Ubicación</string>
+
+    <!-- Logout -->
+    <string name="dialog_title_logout_confirmation">Cerrar Sesión</string>
+    <string name="dialog_message_logout_confirmation">¿Estás seguro de que quieres cerrar sesión?</string>
+
 </resources>

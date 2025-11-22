@@ -32,19 +32,19 @@ class RegisterActivity : AppCompatActivity() {
                     val newUser = User(email = email, password = password)
                     val result = userDao.addUser(newUser)
                     if (result > -1) {
-                        Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, R.string.registration_successful, Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, LoginActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                         startActivity(intent)
                         finish()
                     } else {
-                        Toast.makeText(this, "El correo ya está registrado", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, R.string.registration_error_email_exists, Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.registration_error_password_mismatch, Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.error_empty_fields, Toast.LENGTH_SHORT).show()
             }
         }
     }
